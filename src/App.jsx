@@ -18,14 +18,59 @@ const App = () => {
   const [sportMode, setSportMode] = useState('ski'); // 'ski' or 'snowboard'
   const navigate = useNavigate();
 
-  // Handle scroll effect for navbar
+  // Handle scroll effect for navbar and header hide/show on scroll direction
+  const lastScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      const currentY = window.scrollY;
+      // if menu is open, keep header visible
+      if (isMenuOpen) {
+        setHeaderVisible(true);
+      } else {
+        // show header when scrolling up, hide when scrolling down
+        if (currentY > lastScrollY.current && currentY > 50) {
+          // scrolling down
+          setHeaderVisible(false);
+        } else {
+          // scrolling up
+          setHeaderVisible(true);
+        }
+      }
+
+      // Consider full pages (not 'home') as scrolled so navbar has contrast
+      setScrolled(currentY > 50 || activeView !== 'home');
+      lastScrollY.current = currentY;
     };
-    window.addEventListener('scroll', handleScroll);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isMenuOpen, activeView]);
+
+  // Ensure header initial state reflects actual scroll position (covers direct loads / refreshes)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      lastScrollY.current = window.scrollY;
+      // If we're on a full page, treat it as scrolled so navbar has a solid background
+      setScrolled(window.scrollY > 50 || activeView !== 'home');
+      // make header visible when at top
+      if (window.scrollY <= 50) {
+        setHeaderVisible(true);
+      }
+    }
+  }, [activeView]);
+
+  // Ensure header is visible when switching to full-page views or on activeView change
+  useEffect(() => {
+    const fullPages = ['team','news','links','offers'];
+    if (fullPages.includes(activeView)) {
+      setHeaderVisible(true);
+      // ensure navbar has contrast on full pages
+      setScrolled(true);
+      if (typeof window !== 'undefined') {
+        lastScrollY.current = 0;
+      }
+    }
+  }, [activeView]);
 
   const navigateTo = (viewId) => {
     setIsMenuOpen(false);
@@ -68,6 +113,7 @@ const App = () => {
     <div className="font-sans text-slate-800 bg-white overflow-x-hidden selection:bg-emerald-200">
       <Navbar 
         scrolled={scrolled} 
+        headerVisible={headerVisible}
         sportMode={sportMode} 
         navigateTo={navigateTo} 
         isMenuOpen={isMenuOpen} 
