@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
 import Navbar from './components/Navbar';
 import HomeView from './components/HomeView';
 import TeamPage from './pages/TeamPage';
@@ -14,9 +14,9 @@ import TaberePage from './pages/TaberePage';
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  // ✨ NEW: Interactive State for "Ski" vs "Snowboard"
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [activeView, setActiveView] = useState('home');
   const [sportMode, setSportMode] = useState('ski'); // 'ski' or 'snowboard'
-  const navigate = useNavigate();
 
   // Handle scroll effect for navbar and header hide/show on scroll direction
   const lastScrollY = useRef(typeof window !== 'undefined' ? window.scrollY : 0);
@@ -29,14 +29,11 @@ const App = () => {
       } else {
         // show header when scrolling up, hide when scrolling down
         if (currentY > lastScrollY.current && currentY > 50) {
-          // scrolling down
           setHeaderVisible(false);
         } else {
-          // scrolling up
           setHeaderVisible(true);
         }
       }
-
       // Consider full pages (not 'home') as scrolled so navbar has contrast
       setScrolled(currentY > 50 || activeView !== 'home');
       lastScrollY.current = currentY;
@@ -50,9 +47,7 @@ const App = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       lastScrollY.current = window.scrollY;
-      // If we're on a full page, treat it as scrolled so navbar has a solid background
       setScrolled(window.scrollY > 50 || activeView !== 'home');
-      // make header visible when at top
       if (window.scrollY <= 50) {
         setHeaderVisible(true);
       }
@@ -61,10 +56,18 @@ const App = () => {
 
   // Ensure header is visible when switching to full-page views or on activeView change
   useEffect(() => {
-    const fullPages = ['team','news','links','offers'];
+    const fullPages = [
+      'team',
+      'news',
+      'links',
+      'tabere',
+      'despre-noi',
+      'pachete',
+      'galerie',
+      'recenzii',
+    ];
     if (fullPages.includes(activeView)) {
       setHeaderVisible(true);
-      // ensure navbar has contrast on full pages
       setScrolled(true);
       if (typeof window !== 'undefined') {
         lastScrollY.current = 0;
@@ -74,66 +77,97 @@ const App = () => {
 
   const navigateTo = (viewId) => {
     setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    switch (viewId) {
-      case 'home':
-        navigate('/');
-        break;
-      case 'despre-noi':
-        navigate('/despre-noi');
-        break;
-      case 'pachete':
-        navigate('/pachete');
-        break;
-      case 'team':
-        navigate('/echipa');
-        break;
-      case 'galerie':
-        navigate('/galerie');
-        break;
-      case 'recenzii':
-        navigate('/recenzii');
-        break;
-      case 'news':
-        navigate('/noutati');
-        break;
-      case 'links':
-        navigate('/linkuri');
-        break;
-      case 'tabere':
-        navigate('/tabere');
-        break;
-      default:
-        navigate('/');
+    // If user navigates to a full-page view, show that page; otherwise go to home and scroll to the section
+    const fullPages = [
+      'team',
+      'news',
+      'links',
+      'tabere',
+      'despre-noi',
+      'pachete',
+      'galerie',
+      'recenzii',
+    ];
+    if (fullPages.includes(viewId)) {
+      setActiveView(viewId);
+      setHeaderVisible(true);
+      setScrolled(false);
+      if (typeof window !== 'undefined') {
+        lastScrollY.current = 0;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else {
+      setActiveView('home');
+      setTimeout(() => {
+        const element = document.getElementById(viewId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          setHeaderVisible(true);
+          setScrolled(false);
+          if (typeof window !== 'undefined') {
+            lastScrollY.current = 0;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }
+      }, 100);
     }
   };
 
   return (
     <div className="font-sans text-slate-800 bg-white overflow-x-hidden selection:bg-emerald-200">
-      <Navbar 
-        scrolled={scrolled} 
+      <Navbar
+        scrolled={scrolled}
         headerVisible={headerVisible}
-        sportMode={sportMode} 
-        navigateTo={navigateTo} 
-        isMenuOpen={isMenuOpen} 
-        setIsMenuOpen={setIsMenuOpen} 
+        sportMode={sportMode}
+        navigateTo={navigateTo}
+        isMenuOpen={isMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
       />
-      
-      <Routes>
-        <Route path="/" element={<HomeView sportMode={sportMode} setSportMode={setSportMode} navigateTo={navigateTo} />} />
-        <Route path="/despre-noi" element={<AboutPage sportMode={sportMode} navigateTo={navigateTo} />} />
-        <Route path="/pachete" element={<PackagesPage sportMode={sportMode} />} />
-        <Route path="/echipa" element={<TeamPage navigateTo={navigateTo} sportMode={sportMode} />} />
-        <Route path="/galerie" element={<GalleryPage sportMode={sportMode} />} />
-        <Route path="/recenzii" element={<ReviewsPage sportMode={sportMode} />} />
-        <Route path="/noutati" element={<NewsPage sportMode={sportMode} />} />
-        <Route path="/linkuri" element={<LinksPage sportMode={sportMode} />} />
-        <Route path="/tabere" element={<TaberePage sportMode={sportMode} />} />
-      </Routes>
-
+      <SwitchTransition mode="out-in">
+        <CSSTransition
+          key={activeView}
+          classNames="fluid"
+          timeout={400}
+          unmountOnExit
+        >
+          <div>
+            {activeView === 'home' && (
+              <HomeView
+                sportMode={sportMode}
+                setSportMode={setSportMode}
+                navigateTo={navigateTo}
+              />
+            )}
+            {activeView === 'team' && (
+              <TeamPage navigateTo={navigateTo} sportMode={sportMode} />
+            )}
+            {activeView === 'news' && (
+              <NewsPage sportMode={sportMode} />
+            )}
+            {activeView === 'links' && (
+              <LinksPage sportMode={sportMode} />
+            )}
+            {activeView === 'tabere' && (
+              <TaberePage sportMode={sportMode} />
+            )}
+            {activeView === 'despre-noi' && (
+              <AboutPage sportMode={sportMode} navigateTo={navigateTo} />
+            )}
+            {activeView === 'pachete' && (
+              <PackagesPage sportMode={sportMode} />
+            )}
+            {activeView === 'galerie' && (
+              <GalleryPage sportMode={sportMode} />
+            )}
+            {activeView === 'recenzii' && (
+              <ReviewsPage sportMode={sportMode} />
+            )}
+          </div>
+        </CSSTransition>
+      </SwitchTransition>
       <footer className="bg-slate-900 text-slate-500 py-8 border-t border-slate-800 text-center text-sm">
-         <p>© {new Date().getFullYear()} Școala de Ski Obârșia Lotrului</p>
+        <p>© {new Date().getFullYear()} Școala de Ski Obârșia Lotrului</p>
       </footer>
     </div>
   );
