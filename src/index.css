@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fluid slide-fade transition */
+.fluid-enter {
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+}
+.fluid-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 400ms cubic-bezier(.22,.9,.35,1), transform 400ms cubic-bezier(.22,.9,.35,1);
+}
+.fluid-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.fluid-exit-active {
+  opacity: 0;
+  transform: translateY(-40px) scale(0.98);
+  transition: opacity 400ms cubic-bezier(.22,.9,.35,1), transform 400ms cubic-bezier(.22,.9,.35,1);
+}
