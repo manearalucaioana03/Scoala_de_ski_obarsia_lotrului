@@ -47,9 +47,14 @@ const HomeView = ({ sportMode, setSportMode, navigateTo }) => (
                 </div>
               ))}
             </div>
-            <Button onClick={() => navigateTo('team')} sportMode={sportMode}>
-              Vezi cine te va învăța
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button onClick={() => navigateTo('team')} sportMode={sportMode}>
+                Vezi cine te va învăța
+              </Button>
+              <Button onClick={() => navigateTo('despre-noi')} sportMode={sportMode} className="bg-white border-2 border-slate-200 !text-slate-800">
+                Mai multe despre noi
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -77,9 +82,14 @@ const HomeView = ({ sportMode, setSportMode, navigateTo }) => (
                   </li>
                 ))}
               </ul>
-              <Button href={RESERVATION_URL} className="w-full !text-sm !py-3 bg-white border-2 border-slate-200" sportMode={sportMode}>Rezervă Acum</Button>
+              <Button href="/pachete"className="w-full !text-sm !py-3 bg-white border-2 border-slate-200" sportMode={sportMode}>Rezervă Acum</Button>
             </div>
           ))}
+        </div>
+        <div className="mt-12 flex justify-center">
+          <Button onClick={() => navigateTo('pachete')} sportMode={sportMode}>
+            Vezi toate pachetele
+          </Button>
         </div>
       </div>
     </section>
@@ -104,6 +114,11 @@ const HomeView = ({ sportMode, setSportMode, navigateTo }) => (
            <div className="col-span-2 rounded-[2rem] overflow-hidden relative group shadow-lg">
               <img src="https://images.unsplash.com/photo-1605540436563-5bca919ae766?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Ski" />
            </div>
+         </div>
+         <div className="mt-12 text-center">
+           <Button onClick={() => navigateTo('galerie')} sportMode={sportMode}>
+             Vezi toată galeria
+           </Button>
          </div>
        </div>
     </section>
