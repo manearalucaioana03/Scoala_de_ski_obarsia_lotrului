@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HomeView from './components/HomeView';
 import TeamView from './components/TeamView';
+import NewsView from './components/NewsView';
+import LinksView from './components/LinksView';
+import OffersView from './components/OffersView';
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,8 +24,10 @@ const App = () => {
 
   const navigateTo = (viewId) => {
     setIsMenuOpen(false);
-    if (viewId === 'team') {
-      setActiveView('team');
+    // If user navigates to a full-page view, show that page; otherwise go to home and scroll to the section
+    const fullPages = ['team','news','links','offers'];
+    if (fullPages.includes(viewId)) {
+      setActiveView(viewId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       setActiveView('home');
@@ -46,17 +51,24 @@ const App = () => {
         isMenuOpen={isMenuOpen} 
         setIsMenuOpen={setIsMenuOpen} 
       />
-      {activeView === 'home' ? (
+      {activeView === 'home' && (
         <HomeView 
           sportMode={sportMode} 
           setSportMode={setSportMode} 
           navigateTo={navigateTo} 
         />
-      ) : (
-        <TeamView 
-          navigateTo={navigateTo} 
-          sportMode={sportMode} 
-        />
+      )}
+      {activeView === 'team' && (
+        <TeamView navigateTo={navigateTo} sportMode={sportMode} />
+      )}
+      {activeView === 'news' && (
+        <NewsView navigateTo={navigateTo} />
+      )}
+      {activeView === 'links' && (
+        <LinksView navigateTo={navigateTo} />
+      )}
+      {activeView === 'offers' && (
+        <OffersView navigateTo={navigateTo} />
       )}
 
       <footer className="bg-slate-900 text-slate-500 py-8 border-t border-slate-800 text-center text-sm">

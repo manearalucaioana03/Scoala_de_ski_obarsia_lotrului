@@ -16,9 +16,18 @@ const Navbar = ({ scrolled, sportMode, navigateTo, isMenuOpen, setIsMenuOpen }) 
       </div>
 
       <div className="hidden md:flex items-center gap-8">
-        {['Despre Noi', 'Pachete', 'Echipa Noastră', 'Galerie'].map((item) => (
-           <button key={item} onClick={() => navigateTo(item === 'Echipa Noastră' ? 'team' : item.toLowerCase().replace(' ', '-'))} 
-           className={`font-bold text-sm uppercase tracking-wide hover:-translate-y-1 transition-all ${scrolled ? 'text-slate-600' : 'text-white'}`}>{item}</button>
+        {[
+          { label: 'Despre Noi', id: 'despre-noi' },
+          { label: 'Pachete', id: 'pachete' },
+          { label: 'Echipa Noastră', id: 'team' },
+          { label: 'Galerie', id: 'galerie' },
+          { label: 'Recenzii', id: 'recenzii' },
+          { label: 'Noutăți', id: 'news' },
+          { label: 'Linkuri', id: 'links' },
+          { label: 'Oferte', id: 'offers' }
+        ].map((item) => (
+           <button key={item.id} onClick={() => navigateTo(item.id)}
+             className={`font-bold text-sm uppercase tracking-wide hover:-translate-y-1 transition-all ${scrolled ? 'text-slate-600' : 'text-white'}`}>{item.label}</button>
         ))}
         <Button primary href={RESERVATION_URL} className="!py-2 !px-6 !text-sm" sportMode={sportMode}>
           Rezervă <Calendar size={16} />
@@ -29,12 +38,16 @@ const Navbar = ({ scrolled, sportMode, navigateTo, isMenuOpen, setIsMenuOpen }) 
         {isMenuOpen ? <X size={28} className={scrolled ? "text-slate-800" : "text-white"} /> : <Menu size={28} className={scrolled ? "text-slate-800" : "text-white"} />}
       </button>
     </div>
-    {isMenuOpen && (
+      {isMenuOpen && (
       <div className={`absolute top-full left-0 w-full ${sportMode === 'ski' ? 'bg-emerald-600' : 'bg-indigo-600'} shadow-2xl p-6 flex flex-col gap-6 md:hidden`}>
-        {['Despre Noi', 'Pachete', 'Galerie'].map((item) => (
-           <button key={item} onClick={() => navigateTo(item.toLowerCase().replace(' ', '-'))} className="text-left text-2xl font-black text-white">{item}</button>
+        {[{label:'Despre Noi', id:'despre-noi'}, {label:'Pachete', id:'pachete'}, {label:'Galerie', id:'galerie'}].map((item) => (
+           <button key={item.id} onClick={() => navigateTo(item.id)} className="text-left text-2xl font-black text-white">{item.label}</button>
         ))}
         <button onClick={() => navigateTo('team')} className="text-left text-2xl font-black text-white/80">Echipa Noastră</button>
+        <button onClick={() => navigateTo('recenzii')} className="text-left text-2xl font-black text-white">Recenzii</button>
+        <button onClick={() => navigateTo('news')} className="text-left text-2xl font-black text-white">Noutăți</button>
+        <button onClick={() => navigateTo('links')} className="text-left text-2xl font-black text-white">Linkuri</button>
+        <button onClick={() => navigateTo('offers')} className="text-left text-2xl font-black text-white">Oferte</button>
         <Button href={RESERVATION_URL} className={`w-full justify-center bg-white ${sportMode === 'ski' ? 'text-emerald-600' : 'text-indigo-600'}`} sportMode={sportMode}>Rezervă Acum</Button>
       </div>
     )}
