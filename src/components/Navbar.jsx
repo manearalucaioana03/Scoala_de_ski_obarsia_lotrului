@@ -26,7 +26,7 @@ const Navbar = ({ scrolled, sportMode, navigateTo, isMenuOpen, setIsMenuOpen, he
           { label: 'Recenzii', id: 'recenzii' },
           { label: 'Noutăți', id: 'news' },
           { label: 'Linkuri', id: 'links' },
-          { label: 'Oferte', id: 'offers' }
+          { label: 'Tabere', id: 'tabere' }
         ].map((item) => (
            <button key={item.id} onClick={() => navigateTo(item.id)}
              className={`font-bold text-sm uppercase tracking-wide hover:-translate-y-1 transition-transform duration-450 ${easeSoft} ${scrolled ? 'text-slate-600' : 'text-white'}`}>{item.label}</button>
