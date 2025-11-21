@@ -5,6 +5,8 @@ import FloatingStats from './FloatingStats';
 import SectionTitle from './SectionTitle';
 import Button from './Button';
 import { RESERVATION_URL } from '../constants';
+import Sponsors from './Sponsors';
+import { GOOGLE_REVIEWS_URL } from '../constants';
 
 const HomeView = ({ sportMode, setSportMode, navigateTo }) => (
   <>
@@ -104,6 +106,27 @@ const HomeView = ({ sportMode, setSportMode, navigateTo }) => (
            </div>
          </div>
        </div>
+    </section>
+
+    {/* Sponsors / Partners section */}
+    <section id="sponsori" className="py-12 bg-slate-50">
+      <div className="container mx-auto px-4">
+        <SectionTitle subtitle="Parteneri" title="Mulțumim sponsorilor noștri" sportMode={sportMode} />
+        <Sponsors sportMode={sportMode} />
+      </div>
+    </section>
+
+    {/* Reviews/Recenzii - links to Google reviews */}
+    <section id="recenzii" className="py-12">
+      <div className="container mx-auto px-4 text-center">
+        <SectionTitle subtitle="Păreri" title="Ce spun oamenii despre noi" sportMode={sportMode} />
+        <p className="mb-6 text-slate-600">Vezi recenziile verificare pe Google pentru experiențe reale.</p>
+        <div className="flex justify-center">
+          <Button href={GOOGLE_REVIEWS_URL} className="!px-8 !py-4" sportMode={sportMode} primary>
+            Vezi recenzii pe Google
+          </Button>
+        </div>
+      </div>
     </section>
 
     <section id="contact" className={`py-20 ${sportMode === 'ski' ? 'bg-emerald-600' : 'bg-indigo-600'} text-white`}>
